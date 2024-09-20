@@ -6,12 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.ikno.documentapi.exceptions.InvalidTokenException;
-import me.ikno.documentapi.exceptions.MissingTokenException;
 import me.ikno.documentapi.services.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -19,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -54,8 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         email,
-                        null,
-                        List.of(new SimpleGrantedAuthority((String) claims.get("role")))
+                        claims,
+                        List.of()
                 );
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

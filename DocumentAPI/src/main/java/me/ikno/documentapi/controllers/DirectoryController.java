@@ -1,13 +1,12 @@
 package me.ikno.documentapi.controllers;
 
-import me.ikno.documentapi.bodies.directory.CreateDirectoryBody;
-import me.ikno.documentapi.bodies.directory.UpdateDirectoryBody;
+import io.jsonwebtoken.Claims;
+import me.ikno.documentapi.dtos.CreateDirectoryDTO;
+import me.ikno.documentapi.dtos.UpdateDirectoryDTO;
 import me.ikno.documentapi.models.DirectoryModel;
 import me.ikno.documentapi.services.DirectoryService;
-import me.ikno.documentapi.services.JwtService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,53 +18,57 @@ import java.util.List;
 @RequestMapping("api/v1")
 public class DirectoryController {
     private final DirectoryService directoryService;
-    private final JwtService jwtService;
 
-    public DirectoryController(DirectoryService directoryService, JwtService jwtService) {
+    public DirectoryController(DirectoryService directoryService) {
         this.directoryService = directoryService;
-        this.jwtService = jwtService;
     }
 
     @GetMapping("/directories")
     public ResponseEntity<List<DirectoryModel>> getDirectories() {
-        return ResponseEntity.ok(directoryService.getDirectories());
+        Claims claims = (Claims) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        int userId = Integer.parseInt(claims.get("jti", String.class));
+
+        List<DirectoryModel> directories = directoryService.getDirectories(userId);
+
+        return ResponseEntity.ok(directories);
     }
 
     @GetMapping(value = "/directories/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DirectoryModel> getDirectoryById(@PathVariable Integer id) {
-        return ResponseEntity.ok(directoryService.getDirectoryById(id));
+        Claims claims = (Claims) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        int userId = Integer.parseInt(claims.get("jti", String.class));
+
+        DirectoryModel directory = directoryService.getDirectoryById(id, userId);
+        if(directory == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(directory);
     }
 
     @PutMapping(value = "/directories/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DirectoryModel> updateDirectory(@PathVariable Integer id, @PathVariable UpdateDirectoryBody updateDirectoryBody) {
+    public ResponseEntity<DirectoryModel> updateDirectory(@PathVariable Integer id, @RequestBody UpdateDirectoryDTO updateDirectoryBody) {
 //        return directoryService.updateDirectory(directoryModel);
 //        return ResponseEntity.ok(directoryBody);
+
 
         return null;
     }
 
     @PostMapping(value = "/directories", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> createDirectory(@RequestBody CreateDirectoryBody createDirectoryBody, @RequestHeader(name = "Authorization") String auth) {
+    public ResponseEntity<String> createDirectory(@RequestBody CreateDirectoryDTO createDirectoryBody) {
         String name = createDirectoryBody.getDisplayName();
         int parentId = createDirectoryBody.getParentId();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Claims claims = (Claims) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        int ownerId = Integer.parseInt(claims.get("jti", String.class));
 
-        if(authentication == null) {
-            return ResponseEntity.status(401).build();
+        int directoryId = directoryService.createDirectory(name, parentId, ownerId);
+
+        if(directoryId == -1) { // Invalid parent directory
+            return ResponseEntity.badRequest().build();
         }
 
-        if(authentication.getPrincipal() == null) {
-            return ResponseEntity.status(401).build();
-        }
-
-        String token = auth.substring(7);
-        String user = jwtService.extractEmail(token);
-
-//        int directoryId = directoryService.createDirectory(name, parentId, ownerId);
-
-        System.out.println(authentication);
-
-        return ResponseEntity.ok(0);
+        return ResponseEntity.ok("{\"directoryId\": " + directoryId + "}");
     }
 }
