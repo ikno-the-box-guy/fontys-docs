@@ -1,15 +1,11 @@
 package me.ikno.userapi.services;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.impl.DefaultClaims;
 import me.ikno.userapi.exceptions.EmailTakenException;
 import me.ikno.userapi.exceptions.InvalidCredentialsException;
 import me.ikno.userapi.models.LoginResult;
 import me.ikno.userapi.models.RegisterResult;
 import me.ikno.userapi.models.UserModel;
 import me.ikno.userapi.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
