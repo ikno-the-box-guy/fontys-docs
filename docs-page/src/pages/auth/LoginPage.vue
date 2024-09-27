@@ -2,6 +2,8 @@
 import axios from "axios";
 import router from "../../main.ts";
 import {ref} from "vue";
+import token from "../../utils/localToken.ts";
+import user from "../../utils/localUser.ts";
 
 const loginError = ref(null);
 
@@ -17,12 +19,15 @@ const login = (event: SubmitEvent) => {
     email,
     password
   }).then((response) => {
-    const token = response.data;
-    localStorage.setItem("token", token);
-    console.log("Logged in successfully");
+    token.value = response.data.token;
+    user.value = {
+      name: response.data.displayName,
+      email: response.data.email,
+      root: response.data.rootDirectoryId
+    }
     
     // Redirect the user to the home page
-    router.push("/");
+    router.push({name: "home"});
   }).catch((error) => {
     console.error(error);
     loginError.value = error
@@ -49,6 +54,7 @@ const login = (event: SubmitEvent) => {
           account</RouterLink>
         </div>
       </form>
+      
       <div v-if="loginError" class="flex mt-8 items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
         <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>

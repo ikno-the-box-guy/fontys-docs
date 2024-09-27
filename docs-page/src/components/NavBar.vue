@@ -1,5 +1,6 @@
 <script setup lang="ts">
-
+import token from "../utils/localToken.ts";
+import user from "../utils/localUser.ts";
 </script>
 
 <template>
@@ -10,8 +11,11 @@
       </li>
     </ul>
     <ul class="flex h-full items-center gap-4">
-      <li>
+      <li v-if="!token">
         <RouterLink :to="{name: 'login'}">Login</RouterLink>
+      </li>
+      <li v-else>
+        <span>{{user.name}}</span>
       </li>
     </ul>
   </nav>
