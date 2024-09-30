@@ -8,7 +8,7 @@ interface LocalUser {
 
 const user = useStorage<LocalUser>(
     'user',
-    undefined,
+    null,
     localStorage,
     {
         mergeDefaults: true,

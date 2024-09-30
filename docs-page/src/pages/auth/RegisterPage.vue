@@ -3,12 +3,9 @@ import { ref } from "vue";
 import router from "../../main.ts";
 import axios from "axios";
 
-const registerError = ref(null);
+const registerError = ref('');
 
 const register = async (event: Event) => {
-  event.stopPropagation();
-  event.preventDefault();
-  
   const target = event.target as HTMLFormElement;
   
   const displayName = target.displayName.value;
@@ -26,7 +23,7 @@ const register = async (event: Event) => {
     email,
     password,
     displayName
-  }).then((response) => {
+  }).then(() => {
     // Redirect the user to the login page
     router.push({name: "login"});
   }).catch((error) => {
@@ -40,7 +37,7 @@ const register = async (event: Event) => {
 <template>
   <div class="max-w-2xl mx-auto">
     <div class="center bg-white shadow-md border border-gray-200 rounded-lg max-w-sm p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700 w-1/2">
-      <form class="space-y-6" @submit="register">
+      <form class="space-y-6" @submit.prevent="register">
         <h3 class="text-xl font-medium text-gray-900 dark:text-white">Register your account</h3>
         <div>
           <label for="displayName" class="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300">Your display name</label>

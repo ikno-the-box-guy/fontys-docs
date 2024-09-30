@@ -5,11 +5,10 @@ import {ref} from "vue";
 import token from "../../utils/localToken.ts";
 import user from "../../utils/localUser.ts";
 
-const loginError = ref(null);
+const loginError = ref('');
 
-const login = (event: SubmitEvent) => {
-  event.stopPropagation();
-  event.preventDefault();
+const login = (event: Event) => {
+  loginError.value = "";
   
   const email = (event.target as HTMLFormElement).email.value;
   const password = (event.target as HTMLFormElement).password.value;
@@ -29,8 +28,13 @@ const login = (event: SubmitEvent) => {
     // Redirect the user to the home page
     router.push({name: "home"});
   }).catch((error) => {
-    console.error(error);
-    loginError.value = error
+    if (error.response.status === 401) {
+      loginError.value = "Incorrect credentials";
+    }
+    else {
+      console.error(error);
+      loginError.value = "An error occurred";
+    }
   });
 }
 </script>
@@ -38,7 +42,7 @@ const login = (event: SubmitEvent) => {
 <template>
   <div class="max-w-2xl mx-auto">
     <div class="center bg-white shadow-md border border-gray-200 rounded-lg max-w-sm p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700 w-1/2">
-      <form class="space-y-6" @submit="login">
+      <form class="space-y-6" @submit.prevent="login">
         <h3 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
         <div>
           <label for="email" class="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300">Your email</label>
@@ -61,7 +65,7 @@ const login = (event: SubmitEvent) => {
         </svg>
         <span class="sr-only">Info</span>
         <div>
-          <span class="font-medium">Login error!</span> Incorrect credentials
+          <span class="font-medium">Failed to login: </span>{{ loginError }}
         </div>
       </div>
     </div>

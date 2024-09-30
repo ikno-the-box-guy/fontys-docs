@@ -1,11 +1,11 @@
 import {useStorage} from "@vueuse/core";
 
-const token = useStorage(
+const token = useStorage<string>(
     'token', 
-    '', 
+    null, 
     localStorage,
     {
-        mergeDefaults: '',
+        mergeDefaults: true,
     }
 )
 
