@@ -6,6 +6,7 @@ import me.ikno.userapi.models.LoginResult;
 import me.ikno.userapi.models.RegisterResult;
 import me.ikno.userapi.models.UserModel;
 import me.ikno.userapi.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -14,6 +15,9 @@ import java.util.Optional;
 
 @Service
 public class AuthorizationService {
+    @Value("${password.pepper}")
+    private String pepper;
+
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
@@ -21,6 +25,7 @@ public class AuthorizationService {
     public AuthorizationService(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
+
         encoder = new BCryptPasswordEncoder(10);
     }
 
@@ -32,7 +37,7 @@ public class AuthorizationService {
         }
 
         UserModel user = userModel.get();
-        if(encoder.matches(password, user.getPassword())) {
+        if(encoder.matches(pepper + password, user.getPassword())) {
             HashMap<String, Object> claims = new HashMap<>();
             claims.put("jti", user.getId().toString());
 
@@ -49,7 +54,7 @@ public class AuthorizationService {
         UserModel userModel = new UserModel();
         userModel.setDisplayName(displayName);
         userModel.setEmail(email);
-        userModel.setPassword(encoder.encode(password));
+        userModel.setPassword(encoder.encode(pepper + password));
         userModel.setRootDirectoryId(1);
 
         try {

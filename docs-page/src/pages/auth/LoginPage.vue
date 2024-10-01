@@ -2,7 +2,6 @@
 import axios from "axios";
 import router from "../../main.ts";
 import {ref} from "vue";
-import token from "../../utils/localToken.ts";
 import user from "../../utils/localUser.ts";
 
 const loginError = ref('');
@@ -18,7 +17,6 @@ const login = (event: Event) => {
     email,
     password
   }).then((response) => {
-    token.value = response.data.token;
     user.value = {
       name: response.data.displayName,
       email: response.data.email,

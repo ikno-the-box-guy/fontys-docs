@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import token from "../utils/localToken.ts";
 import user from "../utils/localUser.ts";
 import Popper from "vue3-popper";
 import UserPopper from "./UserPopper.vue";
@@ -13,7 +12,7 @@ import UserPopper from "./UserPopper.vue";
       </li>
     </ul>
     <ul class="flex h-full items-center gap-4">
-      <li v-if="!token || !user">
+      <li v-if="!user">
         <RouterLink :to="{name: 'login'}">Login</RouterLink>
       </li>
       <li v-else>

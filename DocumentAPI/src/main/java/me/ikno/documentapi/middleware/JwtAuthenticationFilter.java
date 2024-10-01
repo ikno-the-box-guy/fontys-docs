@@ -36,11 +36,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             IOException
     {
         try {
-            String token = request.getHeader("Authorization");
+            String token = request.getCookies()[0].getValue();
 
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
-
+            if (token != null) {
                 if(!jwtService.isValidToken(token)) {
                     throw new InvalidTokenException("Invalid token");
                 }

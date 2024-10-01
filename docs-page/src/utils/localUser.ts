@@ -13,8 +13,8 @@ const user = useStorage<LocalUser>(
     {
         mergeDefaults: true,
         serializer: {
-            read: (v: any) => v ? JSON.parse(v) : null,
-            write: (v: any) => JSON.stringify(v),
+            read: (v: any): LocalUser | null => v ? JSON.parse(atob(v)) : null,
+            write: (v: LocalUser) => btoa(JSON.stringify(v)),
         },
     }
 )
