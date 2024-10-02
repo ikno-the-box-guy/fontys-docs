@@ -36,25 +36,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             IOException
     {
         try {
+            if(request.getCookies() == null) {
+                throw new InvalidTokenException("No token provided");
+            }
+
+            if(request.getCookies().length == 0) {
+                throw new InvalidTokenException("No token provided");
+            }
+
+            if(request.getCookies()[0] == null) {
+                throw new InvalidTokenException("No token provided");
+            }
+
             String token = request.getCookies()[0].getValue();
 
-            if (token != null) {
-                if(!jwtService.isValidToken(token)) {
-                    throw new InvalidTokenException("Invalid token");
-                }
-
-                String email = jwtService.extractEmail(token);
-                Claims claims = jwtService.extractClaims(token);
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        email,
-                        claims,
-                        List.of()
-                );
-
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if(token == null || token.isBlank()) {
+                throw new InvalidTokenException("No token provided");
             }
+
+            // TODO: Check if token has expired
+            if(!jwtService.isValidToken(token)) {
+                throw new InvalidTokenException("Invalid token");
+            }
+
+            String email = jwtService.extractEmail(token);
+            Claims claims = jwtService.extractClaims(token);
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    email,
+                    claims,
+                    List.of()
+            );
+
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
 
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException ex) {
