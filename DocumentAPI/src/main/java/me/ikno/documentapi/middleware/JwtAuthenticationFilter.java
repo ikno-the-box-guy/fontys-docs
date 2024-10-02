@@ -3,6 +3,7 @@ package me.ikno.documentapi.middleware;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.ikno.documentapi.exceptions.InvalidTokenException;
@@ -36,21 +37,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             IOException
     {
         try {
-            if(request.getCookies() == null) {
+            String token = getTokenFromCookie(request);
+
+            if(token == null) {
                 throw new InvalidTokenException("No token provided");
             }
 
-            if(request.getCookies().length == 0) {
-                throw new InvalidTokenException("No token provided");
-            }
-
-            if(request.getCookies()[0] == null) {
-                throw new InvalidTokenException("No token provided");
-            }
-
-            String token = request.getCookies()[0].getValue();
-
-            if(token == null || token.isBlank()) {
+            if(token.isBlank()) {
                 throw new InvalidTokenException("No token provided");
             }
 
@@ -84,5 +77,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.getWriter().write(jsonResponse);
         }
+    }
+
+    private String getTokenFromCookie(HttpServletRequest request) {
+        for(Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("token")) {
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 }
