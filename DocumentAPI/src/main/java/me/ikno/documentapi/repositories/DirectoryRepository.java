@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DirectoryRepository extends JpaRepository<DirectoryModel, Integer>{
+public interface DirectoryRepository extends JpaRepository<DirectoryModel, String>{
     List<DirectoryModel> findByOwnerId(int ownerId);
 }

@@ -6,3 +6,5 @@ jwt.secret=YOUR_JWT_SECRET
 jwt.expiration=YOUR_JWT_EXPIRATION
 cors.origin=YOUR_FRONTEND_URL
 server.port=8081
+api.secret=YOUR_API_SECRET
+password.pepper=YOUR_PEPPER

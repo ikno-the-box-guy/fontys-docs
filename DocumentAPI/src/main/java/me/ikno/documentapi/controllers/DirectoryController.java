@@ -37,7 +37,7 @@ public class DirectoryController {
     }
 
     @GetMapping(value = "/directories/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DirectoryModel> getDirectoryById(@PathVariable Integer id) {
+    public ResponseEntity<DirectoryModel> getDirectoryById(@PathVariable String id) {
         // Get user id from auth token
         int userId = authenticationUtil.getUserId();
 
@@ -67,20 +67,25 @@ public class DirectoryController {
     public ResponseEntity<String> createDirectory(@RequestBody CreateDirectoryDTO createDirectoryBody) {
         // Pull info from request body
         String name = createDirectoryBody.getDisplayName();
-        int parentId = createDirectoryBody.getParentId();
+        String parentId = createDirectoryBody.getParentId();
 
         // Get user id from auth token
         int ownerId = authenticationUtil.getUserId();
 
         // Try to create directory
-        int directoryId = directoryService.createDirectory(name, parentId, ownerId);
+        String directoryId = directoryService.createDirectory(name, parentId, ownerId);
 
         // Check if directory was created
-        if(directoryId == -1) { // Invalid parent directory
+        if(directoryId.isEmpty()) { // Invalid parent directory
             return ResponseEntity.badRequest().build();
         }
 
         // Return directory id
         return ResponseEntity.ok("{\"directoryId\": " + directoryId + "}");
+    }
+
+    @PostMapping(value = "/directories/root/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> createRootDirectory(@PathVariable Integer id) {
+        return ResponseEntity.ok(directoryService.createRootDirectory(id));
     }
 }

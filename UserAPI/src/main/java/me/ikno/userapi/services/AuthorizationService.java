@@ -7,8 +7,13 @@ import me.ikno.userapi.models.RegisterResult;
 import me.ikno.userapi.models.UserModel;
 import me.ikno.userapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -17,6 +22,12 @@ import java.util.Optional;
 public class AuthorizationService {
     @Value("${password.pepper}")
     private String pepper;
+
+    @Value("${api.secret}")
+    private String apiSecret;
+
+    @Value("${api.doc-url}")
+    private String docApiUrl;
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -39,7 +50,8 @@ public class AuthorizationService {
         UserModel user = userModel.get();
         if(encoder.matches(pepper + password, user.getPassword())) {
             HashMap<String, Object> claims = new HashMap<>();
-            claims.put("jti", user.getId().toString());
+            claims.put("userId", user.getId().toString());
+            claims.put("rootDirectoryId", user.getRootDirectoryId());
 
             return new LoginResult(
                 user,
@@ -51,18 +63,41 @@ public class AuthorizationService {
     }
 
     public RegisterResult register(String displayName, String email, String password) {
+
         UserModel userModel = new UserModel();
         userModel.setDisplayName(displayName);
         userModel.setEmail(email);
         userModel.setPassword(encoder.encode(pepper + password));
-        userModel.setRootDirectoryId(1);
+        userModel.setRootDirectoryId("0");
 
+        UserModel newUser;
         try {
-            userRepository.save(userModel);
+            newUser = userRepository.save(userModel);
         } catch (Exception e) {
-            throw new EmailTakenException("Email " + email + " is already taken");
+            throw new EmailTakenException("Email " + email + " has already been taken");
         }
 
-        return new RegisterResult(userModel);
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cookie", "token=" + apiSecret);
+
+        ResponseEntity<String> rootResponse = restTemplate.exchange(
+                docApiUrl + "/directories/root/" + newUser.getId(),
+                HttpMethod.POST,
+                new HttpEntity<>(headers),
+                String.class
+        );
+
+        String rootDirectoryId = rootResponse.getBody();
+        if(rootDirectoryId == null) {
+            userRepository.delete(newUser);
+            throw new RuntimeException("Failed to create root directory");
+        }
+
+        newUser.setRootDirectoryId(rootDirectoryId);
+        userRepository.save(newUser);
+
+        return new RegisterResult(newUser);
     }
 }

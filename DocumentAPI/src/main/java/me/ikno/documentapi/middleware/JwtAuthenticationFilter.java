@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.ikno.documentapi.exceptions.InvalidTokenException;
 import me.ikno.documentapi.services.JwtService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,9 @@ import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    @Value("${api.secret}")
+    private String apiSecret;
+
     private final JwtService jwtService;
 
     public JwtAuthenticationFilter(JwtService jwtService) {
@@ -45,6 +49,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if(token.isBlank()) {
                 throw new InvalidTokenException("No token provided");
+            }
+
+            if(token.equals(apiSecret)) {
+                UsernamePasswordAuthenticationToken apiAuthToken = new UsernamePasswordAuthenticationToken(
+                        null,
+                        null,
+                        List.of(() -> "SCOPE_api")
+                );
+
+                apiAuthToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(apiAuthToken);
+
+                filterChain.doFilter(request, response);
+                return;
             }
 
             // TODO: Check if token has expired

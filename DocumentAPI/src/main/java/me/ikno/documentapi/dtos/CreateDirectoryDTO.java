@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class CreateDirectoryDTO {
     private String displayName;
-    private Integer parentId;
+    private String parentId;
 }

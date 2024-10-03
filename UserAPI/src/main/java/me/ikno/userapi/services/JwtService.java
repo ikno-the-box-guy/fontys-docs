@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Service
 public class JwtService {
@@ -23,6 +24,7 @@ public class JwtService {
     public String generateToken(String email, HashMap<String, Object> claims) {
         return Jwts.builder()
                 .subject(email)
+                .id(UUID.randomUUID().toString())
                 .claims(claims)
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSecretKey())

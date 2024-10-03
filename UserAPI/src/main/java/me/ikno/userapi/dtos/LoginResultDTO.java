@@ -8,5 +8,5 @@ import lombok.Setter;
 public class LoginResultDTO {
     String displayName;
     String email;
-    int rootDirectoryId;
+    String rootDirectoryId;
 }
