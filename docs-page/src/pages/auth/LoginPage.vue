@@ -26,7 +26,7 @@ const login = (event: Event) => {
     // Redirect the user to the home page
     router.push({name: "home"});
   }).catch((error) => {
-    if (error.response.status === 401) {
+    if (error.request.status === 401) {
       loginError.value = "Incorrect credentials";
     }
     else {
