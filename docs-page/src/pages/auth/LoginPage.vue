@@ -16,6 +16,12 @@ const login = (event: Event) => {
   axios.post(import.meta.env.VITE_AUTH_API_URL + "/auth/login", {
     email,
     password
+  }, {
+    withCredentials: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json'
+    }
   }).then((response) => {
     user.value = {
       name: response.data.displayName,

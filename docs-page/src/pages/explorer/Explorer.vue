@@ -10,7 +10,9 @@ const directory = ref<Directory>();
 const subdirectories = ref<Directory[]>();
 
 const fetchDirectoryInfo = async () => {
-  axios.get(import.meta.env.VITE_API_URL + "/directories/" + route.params.id)
+  axios.get(import.meta.env.VITE_DOC_API_URL + "/directories/" + route.params.directory, {
+    withCredentials: true,
+  })
   .then((response) => {
     directory.value = response.data;
   }).catch((error) => {
@@ -27,6 +29,7 @@ const fetchDocuments = async () => {
 }
 
 onBeforeMount(() => {
+  fetchDirectoryInfo();
   fetchSubdirectories();
   fetchDocuments();
 });
@@ -34,7 +37,8 @@ onBeforeMount(() => {
 
 <template>
   <h1>Explorer</h1>
-  <h5>{{ directory }}</h5>
+  
+  <h5 v-if="directory">{{ directory.displayName }}</h5>
 </template>
 
 <style scoped>

@@ -55,6 +55,7 @@ public class AuthorizationController {
                 .httpOnly(true)
                 .secure(true)
                 .maxAge(expiration)
+                .sameSite("None")
             .build();
 
         return ResponseEntity.ok()
