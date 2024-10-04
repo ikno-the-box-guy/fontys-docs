@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import user from "../utils/localUser.ts";
-import Popper from "vue3-popper";
 import UserPopper from "./UserPopper.vue";
 </script>
 
@@ -9,6 +8,9 @@ import UserPopper from "./UserPopper.vue";
     <ul class="flex h-full items-center gap-4">
       <li>
         <RouterLink :to="{name: 'home'}">Home</RouterLink>
+      </li>
+      <li v-if="user">
+        <RouterLink :to="'/explorer/' + user.root">Explorer</RouterLink>
       </li>
     </ul>
     <ul class="flex h-full items-center gap-4">

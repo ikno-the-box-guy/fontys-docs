@@ -3,5 +3,8 @@ import './style.css'
 import App from './App.vue'
 import './index.css'
 import router from "./router.ts";
+import {createVfm} from "vue-final-modal";
 
-createApp(App).use(router).mount('#app')
+const vfm = createVfm()
+
+createApp(App).use(vfm).use(router).mount('#app')

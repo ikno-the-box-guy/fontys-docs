@@ -15,3 +15,10 @@
 .btn-red:hover {
     @apply bg-red-700;
 }
+
+.btn-green {
+    @apply bg-green-600 text-white;
+}
+.btn-green:hover {
+    @apply bg-green-700;
+}

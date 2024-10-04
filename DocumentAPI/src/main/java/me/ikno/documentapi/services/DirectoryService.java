@@ -1,5 +1,6 @@
 package me.ikno.documentapi.services;
 
+import me.ikno.documentapi.exceptions.DuplicateDirectoryException;
 import me.ikno.documentapi.models.DirectoryModel;
 import me.ikno.documentapi.repositories.DirectoryRepository;
 import org.springframework.lang.Nullable;
@@ -58,7 +59,11 @@ public class DirectoryService {
         directoryModel.setParentId(parentId);
         directoryModel.setOwnerId(ownerId);
 
-        return directoryRepository.save(directoryModel).getId();
+        try {
+            return directoryRepository.save(directoryModel).getId();
+        } catch (Exception e) {
+            throw new DuplicateDirectoryException("Directory with name " + name + " already exists");
+        }
     }
 
     @Async

@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import {onBeforeMount, onMounted, ref, watch} from "vue";
+import {onBeforeMount, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {Directory} from "../../entities/Directory.ts";
+import {Document} from "../../entities/Document.ts";
 import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
 import axios from "axios";
+import DirectoryList from "../../components/explorer/DirectoryList.vue";
+import DocumentList from "../../components/explorer/DocumentList.vue";
+import {documentApi} from "../../api/AxiosInstances.ts";
 
 const route = useRoute();
 
 const directory = ref<Directory>();
 const subdirectories = ref<Directory[]>();
+const documents = ref<Document[]>();
 
 const fetchDirectoryInfo = async () => {
-  axios.get(import.meta.env.VITE_DOC_API_URL + "/directories/" + route.params.directory, {
-    withCredentials: true,
-  })
+  documentApi.get("/directories/" + route.params.directory)
   .then((response) => {
     directory.value = response.data;
   }).catch((error) => {
@@ -22,12 +25,10 @@ const fetchDirectoryInfo = async () => {
 }
 
 const fetchSubdirectories = async () => {
-  axios.get(import.meta.env.VITE_DOC_API_URL + "/directories/sub/" + route.params.directory, {
-    withCredentials: true,
-  })
-      .then((response) => {
-        subdirectories.value = response.data;
-      }).catch((error) => {
+  documentApi.get("/directories/sub/" + route.params.directory)
+  .then((response) => {
+    subdirectories.value = response.data;
+  }).catch((error) => {
     console.error(error);
   });
 }
@@ -64,22 +65,30 @@ watch(route, () => {
       <h2 class="text-xl font-semibold text-gray-800">{{ directory.displayName }}</h2>
     </div>
 
-    <div v-if="subdirectories && directory">
-      <ul class="space-y-2">
-        <li v-for="dir in subdirectories" :key="dir.id" class="bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition-colors">
-          <RouterLink :to="'/explorer/' + dir.id" class="text-blue-600 hover:underline">
-            {{ dir.displayName }}
-          </RouterLink>
-        </li>
-      </ul>
-    </div>
-
-    <div v-else class="text-gray-500">
-      Loading directories...
+    <div class="flex flex-col md:flex-row w-full space-y-4 md:space-x-4 md:space-y-0">
+      <div class="flex-col w-full md:w-1/2 rounded border-2 p-4">
+        
+        <div v-if="subdirectories && directory">
+          <DirectoryList @refresh="fetchSubdirectories" :parent-id="directory.id" :subdirectories="subdirectories"/>
+        </div>
+        <div v-else class="text-gray-500">
+          Loading directories...
+        </div>
+        
+      </div>
+      <div class="flex-col w-full md:w-1/2 rounded border-2 p-4">
+        
+        <div v-if="documents && directory">
+          <DocumentList documents="documents"/>
+        </div>
+        <div v-else class="text-gray-500">
+          Loading documents...
+        </div>
+        
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-
 </style>
