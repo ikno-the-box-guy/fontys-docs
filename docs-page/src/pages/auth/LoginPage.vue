@@ -3,6 +3,7 @@ import axios from "axios";
 import {ref} from "vue";
 import user from "../../utils/localUser.ts";
 import router from "../../router.ts";
+import {authApi} from "../../api/AxiosInstances.ts";
 
 const loginError = ref('');
 
@@ -13,11 +14,10 @@ const login = (event: Event) => {
   const password = (event.target as HTMLFormElement).password.value;
   
   // Send the email and password to the server
-  axios.post(import.meta.env.VITE_AUTH_API_URL + "/auth/login", {
+  authApi.post("/auth/login", {
     email,
     password
   }, {
-    withCredentials: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json'
@@ -33,7 +33,7 @@ const login = (event: Event) => {
     }
     
     // Redirect the user to the home page
-    router.push({name: "home"});
+    router.push('/');
   }).catch((error) => {
     if (error.request.status === 401) {
       loginError.value = "Incorrect credentials";

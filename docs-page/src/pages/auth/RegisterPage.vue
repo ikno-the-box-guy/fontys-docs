@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import router from "../../router.ts";
+import {authApi} from "../../api/AxiosInstances.ts";
 
 const registerError = ref('');
 
@@ -19,7 +20,7 @@ const register = async (event: Event) => {
   }
 
   // Send the email and password to the server
-  axios.post(import.meta.env.VITE_AUTH_API_URL + "/auth/register", {
+  authApi.post("/auth/register", {
     email,
     password,
     displayName

@@ -4,6 +4,7 @@ import LoginPage from "./pages/auth/LoginPage.vue";
 import RegisterPage from "./pages/auth/RegisterPage.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import user from "./utils/localUser.ts";
+import PageNotFound from "./pages/PageNotFound.vue";
 
 const routes = [
     {
@@ -31,6 +32,11 @@ const routes = [
         name: 'register', 
         path: "/register", 
         component: RegisterPage
+    },
+    {
+        name: '404',
+        path: '/:pathMatch(.*)*',
+        component: PageNotFound
     }
 ]
 
