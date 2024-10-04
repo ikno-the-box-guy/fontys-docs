@@ -7,11 +7,15 @@ import me.ikno.documentapi.models.DirectoryModel;
 import me.ikno.documentapi.services.DirectoryService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 // Basic directory crud operations
+
+// TODO: Make all methods async
 
 @RestController
 @RequestMapping("api/v1")
@@ -84,8 +88,22 @@ public class DirectoryController {
         return ResponseEntity.ok("{\"directoryId\": " + directoryId + "}");
     }
 
+    // For API access only
+    @Async
     @PostMapping(value = "/directories/root/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> createRootDirectory(@PathVariable Integer id) {
-        return ResponseEntity.ok(directoryService.createRootDirectory(id));
+    public CompletableFuture<ResponseEntity<String>> createRootDirectory(@PathVariable Integer id) {
+        return directoryService.createRootDirectory(id).thenApply(ResponseEntity::ok);
+    }
+
+    @GetMapping(value = "/directories/sub/{parentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DirectoryModel>> getSubdirectories(@PathVariable String parentId) {
+        // Get user id from auth token
+        int userId = authenticationUtil.getUserId();
+
+        // Get sub directories for parent directory
+        List<DirectoryModel> directories = directoryService.getSubdirectories(parentId, userId);
+
+        // Return directories
+        return ResponseEntity.ok(directories);
     }
 }

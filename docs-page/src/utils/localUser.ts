@@ -4,6 +4,7 @@ interface LocalUser {
     name: string;
     email: string;
     root: number;
+    expiration: number;
 }
 
 const user = useStorage<LocalUser>(

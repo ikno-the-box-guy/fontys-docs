@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import router from "../../main.ts";
 import axios from "axios";
+import router from "../../router.ts";
 
 const registerError = ref('');
 

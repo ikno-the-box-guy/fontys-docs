@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface DirectoryRepository extends JpaRepository<DirectoryModel, String>{
     List<DirectoryModel> findByOwnerId(int ownerId);
+    List<DirectoryModel> findByParentIdAndOwnerIdAndIdNot(String parentId, int ownerId, String id);
 }

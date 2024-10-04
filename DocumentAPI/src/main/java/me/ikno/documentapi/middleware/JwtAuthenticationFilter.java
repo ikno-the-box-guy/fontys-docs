@@ -65,7 +65,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // TODO: Check if token has expired
             if(!jwtService.isValidToken(token)) {
                 throw new InvalidTokenException("Invalid token");
             }

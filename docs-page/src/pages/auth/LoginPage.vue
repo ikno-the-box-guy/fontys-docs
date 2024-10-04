@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import axios from "axios";
-import router from "../../main.ts";
 import {ref} from "vue";
 import user from "../../utils/localUser.ts";
+import router from "../../router.ts";
 
 const loginError = ref('');
 
@@ -23,10 +23,13 @@ const login = (event: Event) => {
       'Content-Type': 'application/json'
     }
   }).then((response) => {
+    const expiration = Date.now() + response.data.expiration;
+    
     user.value = {
       name: response.data.displayName,
       email: response.data.email,
-      root: response.data.rootDirectoryId
+      root: response.data.rootDirectoryId,
+      expiration: expiration
     }
     
     // Redirect the user to the home page

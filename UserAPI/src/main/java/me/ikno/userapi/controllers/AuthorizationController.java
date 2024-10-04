@@ -48,6 +48,7 @@ public class AuthorizationController {
         loginResultDTO.setDisplayName(user.getDisplayName());
         loginResultDTO.setEmail(user.getEmail());
         loginResultDTO.setRootDirectoryId(user.getRootDirectoryId());
+        loginResultDTO.setExpiration(expiration);
 
         // Put token in cookie
         HttpCookie cookie = ResponseCookie.from("token", loginResult.getToken())

@@ -3,10 +3,13 @@ package me.ikno.documentapi.services;
 import me.ikno.documentapi.models.DirectoryModel;
 import me.ikno.documentapi.repositories.DirectoryRepository;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static me.ikno.documentapi.utils.IdUtils.compressUuid;
 
@@ -58,7 +61,8 @@ public class DirectoryService {
         return directoryRepository.save(directoryModel).getId();
     }
 
-    public String createRootDirectory(int ownerId) {
+    @Async
+    public CompletableFuture<String> createRootDirectory(int ownerId) {
         String directoryId = compressUuid(UUID.randomUUID().toString());
 
         DirectoryModel directoryModel = new DirectoryModel();
@@ -67,6 +71,10 @@ public class DirectoryService {
         directoryModel.setParentId(directoryId);
         directoryModel.setOwnerId(ownerId);
 
-        return directoryRepository.save(directoryModel).getId();
+        return CompletableFuture.completedFuture(directoryRepository.save(directoryModel).getId());
+    }
+
+    public List<DirectoryModel> getSubdirectories(String parentId, int ownerId) {
+        return directoryRepository.findByParentIdAndOwnerIdAndIdNot(parentId, ownerId, parentId);
     }
 }

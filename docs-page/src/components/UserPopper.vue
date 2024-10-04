@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
   import Popper from "vue3-popper";
   import user from "../utils/localUser.ts";
-  import router from "../main.ts";
+  import router from "../router.ts";
   
   const handleLogout = () => {
     user.value = null;
