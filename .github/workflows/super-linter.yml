@@ -31,9 +31,6 @@ jobs:
           fetch-depth: 0
 
       - name: List configs
-        run: ls -l /.linter-configs
-
-      - name: List configs part two
         run: ls -l .linter-configs
 
       - name: Super-linter
@@ -41,4 +38,4 @@ jobs:
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINTER_RULES_PATH: /.linter-configs
+          LINTER_RULES_PATH: .linter-configs
