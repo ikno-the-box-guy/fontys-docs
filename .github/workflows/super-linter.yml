@@ -39,4 +39,4 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: .linter-configs
-          JAVA_SUPPRESSION_FILE: .linter-configs/checkstyle-suppressions.xml
+          JAVA_FILE_NAME: checkstyle.xml
