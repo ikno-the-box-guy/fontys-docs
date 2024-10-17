@@ -97,6 +97,19 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.5.0</version>
+
+                <configuration>
+                    <configLocation>../.linter-configs/checkstyle.xml</configLocation>
+<!--                    <suppressionsLocation>../.linter-configs/checkstyle-suppressions.xml</suppressionsLocation>-->
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>false</failsOnError>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
