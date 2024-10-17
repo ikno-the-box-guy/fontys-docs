@@ -25,7 +25,6 @@ public class DocumentClient {
     }
 
     public Optional<String> createRootDirectory(int userId) {
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cookie", "token=" + apiSecret);
 

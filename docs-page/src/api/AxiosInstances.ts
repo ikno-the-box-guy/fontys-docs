@@ -12,10 +12,12 @@ export const authApi = axios.create({
 });
 
 documentApi.interceptors.response.use((response) => {
+    return response;
+}, (error) => {
     // TODO: Check if it isn't just a role problem or something
-    if (response.status === 401 || response.status === 403) {
+    if (error.response.status === 401 || error.response.status === 403) {
         router.push("/login").then(r => r);
     }
-    
-    return response;
+
+    return error;
 });

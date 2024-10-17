@@ -76,10 +76,16 @@ public class DirectoryService {
         directoryModel.setParentId(directoryId);
         directoryModel.setOwnerId(ownerId);
 
-        return CompletableFuture.completedFuture(directoryRepository.save(directoryModel).getId());
+        String id = directoryRepository.save(directoryModel).getId();
+
+        return CompletableFuture.completedFuture(id);
     }
 
-    public List<DirectoryModel> getSubdirectories(String parentId, int ownerId) {
-        return directoryRepository.findByParentIdAndOwnerIdAndIdNot(parentId, ownerId, parentId);
+    @Async
+    public CompletableFuture<List<DirectoryModel>> getSubdirectories(String parentId, int ownerId) {
+        List<DirectoryModel> directories =
+                directoryRepository.findByParentIdAndOwnerIdAndIdNot(parentId, ownerId, parentId);
+
+        return CompletableFuture.completedFuture(directories);
     }
 }
