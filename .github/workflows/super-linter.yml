@@ -1,10 +1,7 @@
 ---
-name: Lint Code Base
+name: Lint Pull Requests
 
 on: # yamllint disable-line rule:truthy
-  push: 
-    branches:
-      - main
   pull_request: 
     branches:
       - main

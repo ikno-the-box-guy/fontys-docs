@@ -1,0 +1,32 @@
+---
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - DocumentAPI
+          - UserAPI
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Run Tests for ${{ matrix.service }}
+        run: mvn test --file "${{ matrix.service }}/pom.xml"
+
+      - name: Build ${{ matrix.service }}
+        run: mvn clean package --file "${{ matrix.service }}/pom.xml"
