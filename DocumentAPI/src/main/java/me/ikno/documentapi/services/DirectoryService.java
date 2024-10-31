@@ -80,12 +80,4 @@ public class DirectoryService {
 
         return CompletableFuture.completedFuture(id);
     }
-
-    @Async
-    public CompletableFuture<List<DirectoryModel>> getSubdirectories(String parentId, int ownerId) {
-        List<DirectoryModel> directories =
-                directoryRepository.findByParentIdAndOwnerIdAndIdNot(parentId, ownerId, parentId);
-
-        return CompletableFuture.completedFuture(directories);
-    }
 }

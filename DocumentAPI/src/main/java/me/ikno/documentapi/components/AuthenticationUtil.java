@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthenticationUtil {
     public int getUserId() {
-        Claims claims = (Claims) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        var context = SecurityContextHolder.getContext();
+        var authentication = context.getAuthentication();
+        var credentials = authentication.getCredentials();
+        Claims claims = (Claims) credentials;
         return Integer.parseInt(claims.get("userId", String.class));
     }
 

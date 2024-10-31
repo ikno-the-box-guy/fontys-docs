@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface DirectoryRepository extends JpaRepository<DirectoryModel, String>{
     List<DirectoryModel> findByOwnerId(int ownerId);
+
+    // Find subdirectories of a directory (but not the directory itself)
     List<DirectoryModel> findByParentIdAndOwnerIdAndIdNot(String parentId, int ownerId, String id);
 }

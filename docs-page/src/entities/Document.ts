@@ -1,4 +1,6 @@
 export type Document = {
-    id: number;
-    name: string;
+    id: string;
+    displayName: string;
+    dateCreated: string;
+    dateChanged: string;
 }

@@ -97,17 +97,4 @@ public class DirectoryController {
     public CompletableFuture<ResponseEntity<String>> createRootDirectory(@PathVariable Integer id) {
         return directoryService.createRootDirectory(id).thenApply(ResponseEntity::ok);
     }
-
-    @Async
-    @GetMapping(value = "/directories/sub/{parentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<ResponseEntity<List<DirectoryModel>>> getSubdirectories(@PathVariable String parentId) {
-        // Get user id from auth token
-        int userId = authenticationUtil.getUserId();
-
-        // Get subdirectories from parent directory
-        CompletableFuture<List<DirectoryModel>> asyncDirectories = directoryService.getSubdirectories(parentId, userId);
-
-        // Return directories
-        return asyncDirectories.thenApply(ResponseEntity::ok);
-    }
 }

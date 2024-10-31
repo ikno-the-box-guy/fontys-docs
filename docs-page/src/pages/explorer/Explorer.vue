@@ -12,29 +12,34 @@ import {documentApi} from "../../api/AxiosInstances.ts";
 const route = useRoute();
 
 const directory = ref<Directory>();
-const subdirectories = ref<Directory[]>();
+const directories = ref<Directory[]>();
 const documents = ref<Document[]>();
 
 const fetchDirectoryInfo = async () => {
   documentApi.get("/directories/" + route.params.directory)
   .then((response) => {
-    directory.value = response.data;
+    directory.value = response.data as Directory;
   }).catch((error) => {
     console.error(error);
   });
 }
 
 const fetchSubdirectories = async () => {
-  documentApi.get("/directories/sub/" + route.params.directory)
+  documentApi.get("/explorer/" + route.params.directory + "/directories")
   .then((response) => {
-    subdirectories.value = response.data;
+    directories.value = response.data as Directory[];
   }).catch((error) => {
     console.error(error);
   });
 }
 
 const fetchDocuments = async () => {
-  
+  documentApi.get("/explorer/" + route.params.directory + "/documents")
+  .then((response) => {
+    documents.value = response.data as Document[];
+  }).catch((error) => {
+    console.error(error);
+  });
 }
 
 onBeforeMount(() => {
@@ -51,7 +56,7 @@ watch(route, () => {
 </script>
 
 <template>
-  <div class="p-6 bg-gray-100 min-h-screen">
+ <div class="p-6 bg-gray-100 h-full">
     <h1 class="text-3xl font-bold mb-4">Explorer</h1>
 
     <div v-if="directory && directory.id !== directory.parentId" class="mb-6">
@@ -66,20 +71,20 @@ watch(route, () => {
     </div>
 
     <div class="flex flex-col md:flex-row w-full space-y-4 md:space-x-4 md:space-y-0">
-      <div class="flex-col w-full md:w-1/2 rounded border-2 p-4">
+      <div class="flex-col w-full md:w-1/2 rounded-lg border-2 p-4">
         
-        <div v-if="subdirectories && directory">
-          <DirectoryList @refresh="fetchSubdirectories" :parent-id="directory.id" :subdirectories="subdirectories"/>
+        <div v-if="directories && directory">
+          <DirectoryList @refresh="fetchSubdirectories" :parent-id="directory.id" :subdirectories="directories"/>
         </div>
         <div v-else class="text-gray-500">
           Loading directories...
         </div>
         
       </div>
-      <div class="flex-col w-full md:w-1/2 rounded border-2 p-4">
+      <div class="flex-col w-full md:w-1/2 rounded-lg border-2 p-4">
         
         <div v-if="documents && directory">
-          <DocumentList documents="documents"/>
+          <DocumentList :documents="documents"/>
         </div>
         <div v-else class="text-gray-500">
           Loading documents...
