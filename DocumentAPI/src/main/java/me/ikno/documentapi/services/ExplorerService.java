@@ -26,6 +26,6 @@ public class ExplorerService {
     }
 
     public List<DocumentModel> getDocuments(String directoryId, int ownerId) {
-        return documentRepository.findByIdAndOwnerId(directoryId, ownerId);
+        return documentRepository.findByParentIdAndOwnerId(directoryId, ownerId);
     }
 }

@@ -4,7 +4,6 @@ import {useRoute} from "vue-router";
 import {Directory} from "../../entities/Directory.ts";
 import {Document} from "../../entities/Document.ts";
 import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
-import axios from "axios";
 import DirectoryList from "../../components/explorer/DirectoryList.vue";
 import DocumentList from "../../components/explorer/DocumentList.vue";
 import {documentApi} from "../../api/AxiosInstances.ts";
@@ -74,7 +73,7 @@ watch(route, () => {
       <div class="flex-col w-full md:w-1/2 rounded-lg border-2 p-4">
         
         <div v-if="directories && directory">
-          <DirectoryList @refresh="fetchSubdirectories" :parent-id="directory.id" :subdirectories="directories"/>
+          <DirectoryList :parent-id="directory.id" :subdirectories="directories"/>
         </div>
         <div v-else class="text-gray-500">
           Loading directories...
@@ -84,7 +83,7 @@ watch(route, () => {
       <div class="flex-col w-full md:w-1/2 rounded-lg border-2 p-4">
         
         <div v-if="documents && directory">
-          <DocumentList :documents="documents"/>
+          <DocumentList :documents="documents" :parent-id="directory.id"/>
         </div>
         <div v-else class="text-gray-500">
           Loading documents...

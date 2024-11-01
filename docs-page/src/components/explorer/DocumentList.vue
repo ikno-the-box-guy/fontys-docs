@@ -10,10 +10,6 @@ const props = defineProps<{
   documents: Document[];
 }>();
 
-const emit = defineEmits<{
-  (e: 'refresh'): void;
-}>();
-
 const buttons = [
   { label: 'Confirm', action: 'onConfirm' },
 ];
@@ -28,7 +24,8 @@ const handleButtonClick = ({action, inputValue}: event) => {
       parentId: props.parentId,
       displayName: inputValue
     }).then((response) => {
-      emit('refresh');
+      props.documents.push(response.data);
+      show.value = false;
     }).catch((error) => {
       if (error.response.status === 409) {
         errorMessage.value = "A document with this name already exists";

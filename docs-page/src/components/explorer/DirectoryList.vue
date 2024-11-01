@@ -10,10 +10,6 @@ const props = defineProps<{
   subdirectories: Directory[];
 }>();
 
-const emit = defineEmits<{
-  (e: 'refresh'): void;
-}>();
-
 const buttons = [
   { label: 'Confirm', action: 'onConfirm' },
 ];
@@ -28,7 +24,8 @@ const handleButtonClick = ({action, inputValue}: event) => {
       parentId: props.parentId,
       displayName: inputValue
     }).then((response) => {
-      emit('refresh');
+      props.subdirectories.push(response.data);
+      show.value = false;
     }).catch((error) => {
       if (error.response.status === 409) {
         errorMessage.value = "A directory with this name already exists";

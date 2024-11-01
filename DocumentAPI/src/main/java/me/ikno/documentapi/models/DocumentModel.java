@@ -32,10 +32,10 @@ public class DocumentModel {
     private String content;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @Size(max = 32)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "parent_directory_id", nullable = false)
-    private DirectoryModel parentDirectory;
+    @Column(name = "parent_directory_id", nullable = false)
+    private String parentId;
 
     @NotNull
     @Column(name = "owner_id", nullable = false)
