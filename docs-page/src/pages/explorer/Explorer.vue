@@ -55,7 +55,7 @@ watch(route, () => {
 </script>
 
 <template>
- <div class="p-6 bg-gray-100 h-full">
+ <div class="p-6 bg-gray-100 min-h-full">
     <h1 class="text-3xl font-bold mb-4">Explorer</h1>
 
     <div v-if="directory && directory.id !== directory.parentId" class="mb-6">

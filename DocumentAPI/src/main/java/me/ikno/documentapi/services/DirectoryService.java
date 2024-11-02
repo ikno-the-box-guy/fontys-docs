@@ -40,15 +40,15 @@ public class DirectoryService {
         return directory;
     }
 
-    public String createDirectory(String name, String parentId, int ownerId) {
+    public DirectoryModel createDirectory(String name, String parentId, int ownerId) {
         DirectoryModel parentDirectory = directoryRepository.findById(parentId).orElse(null);
 
         if(parentDirectory == null) {
-            return "";
+            return null;
         }
 
         if(parentDirectory.getOwnerId() != ownerId) {
-            return "";
+            return null;
         }
 
         String directoryId = compressUuid(UUID.randomUUID().toString());
@@ -60,7 +60,7 @@ public class DirectoryService {
         directoryModel.setOwnerId(ownerId);
 
         try {
-            return directoryRepository.save(directoryModel).getId();
+            return directoryRepository.save(directoryModel);
         } catch (Exception e) {
             throw new DuplicateDirectoryException("Directory with name " + name + " already exists");
         }

@@ -67,28 +67,25 @@ public class DirectoryController {
         return null;
     }
 
-    @Async
     @PostMapping(value = "/directories", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<ResponseEntity<String>> createDirectory(@RequestBody CreateDirectoryDTO createDirectoryBody) {
-        return CompletableFuture.supplyAsync(() -> {
-            // Pull info from request body
-            String name = createDirectoryBody.getDisplayName();
-            String parentId = createDirectoryBody.getParentId();
+    public ResponseEntity<DirectoryModel> createDirectory(@RequestBody CreateDirectoryDTO createDirectoryBody) {
+        // Pull info from request body
+        String name = createDirectoryBody.getDisplayName();
+        String parentId = createDirectoryBody.getParentId();
 
-            // Get user id from auth token
-            int ownerId = authenticationUtil.getUserId();
+        // Get user id from auth token
+        int ownerId = authenticationUtil.getUserId();
 
-            // Try to create directory
-            String directoryId = directoryService.createDirectory(name, parentId, ownerId);
+        // Try to create directory
+        DirectoryModel directoryModel = directoryService.createDirectory(name, parentId, ownerId);
 
-            // Check if directory was created
-            if(directoryId.isEmpty()) { // Invalid parent directory
-                return ResponseEntity.badRequest().build();
-            }
+        // Check if directory was created
+        if(directoryModel == null) { // Invalid parent directory
+            return ResponseEntity.badRequest().build();
+        }
 
-            // Return directory id
-            return ResponseEntity.ok("{\"directoryId\": " + directoryId + "}");
-        });
+        // Return directory id
+        return ResponseEntity.ok(directoryModel);
     }
 
     // For API access only

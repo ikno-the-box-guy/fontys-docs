@@ -5,6 +5,7 @@ import RegisterPage from "./pages/auth/RegisterPage.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import user from "./utils/localUser.ts";
 import PageNotFound from "./pages/PageNotFound.vue";
+import EditPage from "./pages/doc/EditPage.vue";
 
 const routes = [
     {
@@ -23,6 +24,14 @@ const routes = [
             requiresAuth: true
         }
     },
+    {
+        name: 'edit',
+        path: '/edit/:file',
+        component: EditPage,
+        meta: {
+            requiresAuth: true
+        }
+    },
     { 
         name: 'login', 
         path: '/login', 
@@ -30,7 +39,7 @@ const routes = [
     },
     { 
         name: 'register', 
-        path: "/register", 
+        path: '/register', 
         component: RegisterPage
     },
     {
