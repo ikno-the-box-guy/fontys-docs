@@ -2,24 +2,9 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import './index.css'
+import router from "./router.ts";
+import {createVfm} from "vue-final-modal";
 
-import {createMemoryHistory, createRouter, createWebHistory} from 'vue-router'
+const vfm = createVfm()
 
-import HomePage from "./pages/HomePage.vue";
-import LoginPage from "./pages/auth/LoginPage.vue";
-import RegisterPage from "./pages/auth/RegisterPage.vue";
-
-const routes = [
-    { name: 'home', path: '/', component: HomePage },
-    { name: 'login', path: '/login', component: LoginPage },
-    { name: 'register', path: "/register", component: RegisterPage}
-]
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes,
-})
-
-createApp(App).use(router).mount('#app')
-
-export default router
+createApp(App).use(vfm).use(router).mount('#app')

@@ -5,27 +5,31 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
+@Setter
 @Entity
-@Table(name = "directory", schema = "document_schema")
+@Table(name = "directory")
 public class DirectoryModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "directory_id", nullable = false)
-    private Integer id;
+    @Size(max = 32)
+    @Column(name = "directory_id", nullable = false, length = 16)
+    private String id;
 
-    @Setter
-    @NotNull
     @Size(max = 255)
+    @NotNull
     @Column(name = "display_name", nullable = false)
     private String displayName;
 
-    @Setter
+    @NotNull
+    @Size(max = 32)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @Column(name = "parent_directory_id", nullable = false)
-    private Integer parentId;
+    private String parentId;
 
-    @Setter
+    @NotNull
     @Column(name = "owner_id", nullable = false)
     private Integer ownerId;
 }

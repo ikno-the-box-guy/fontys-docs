@@ -33,6 +33,6 @@ public class UserModel {
 
     @NotNull
     @Column(name = "root_directory_id", nullable = false)
-    private Integer rootDirectoryId;
-
+    @Size(max = 32)
+    private String rootDirectoryId;
 }

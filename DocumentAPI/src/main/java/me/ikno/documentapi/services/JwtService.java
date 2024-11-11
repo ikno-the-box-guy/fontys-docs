@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.Date;
 
 @Service
 public class JwtService {
@@ -19,7 +20,11 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public boolean isValidToken(String token) {
+    private boolean hasTokenExpired(String token) {
+        return extractClaims(token).getExpiration().before(new Date());
+    }
+
+    private boolean validSignature(String token) {
         try {
             Jwts.parser()
                     .verifyWith(getSecretKey())
@@ -29,6 +34,10 @@ public class JwtService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean isValidToken(String token) {
+        return !hasTokenExpired(token) && validSignature(token);
     }
 
     public String extractEmail(String token) {

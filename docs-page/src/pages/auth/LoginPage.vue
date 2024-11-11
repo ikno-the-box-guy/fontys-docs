@@ -1,31 +1,47 @@
 <script setup lang="ts">
 import axios from "axios";
-import router from "../../main.ts";
 import {ref} from "vue";
+import user from "../../utils/localUser.ts";
+import router from "../../router.ts";
+import {authApi} from "../../api/AxiosInstances.ts";
 
-const loginError = ref(null);
+const loginError = ref('');
 
-const login = (event: SubmitEvent) => {
-  event.stopPropagation();
-  event.preventDefault();
+const login = (event: Event) => {
+  loginError.value = "";
   
   const email = (event.target as HTMLFormElement).email.value;
   const password = (event.target as HTMLFormElement).password.value;
   
   // Send the email and password to the server
-  axios.post(import.meta.env.VITE_AUTH_API_URL + "/auth/login", {
+  authApi.post("/auth/login", {
     email,
     password
+  }, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json'
+    }
   }).then((response) => {
-    const token = response.data;
-    localStorage.setItem("token", token);
-    console.log("Logged in successfully");
+    const expiration = Date.now() + response.data.expiration;
+    
+    user.value = {
+      name: response.data.displayName,
+      email: response.data.email,
+      root: response.data.rootDirectoryId,
+      expiration: expiration
+    }
     
     // Redirect the user to the home page
-    router.push("/");
+    router.push('/');
   }).catch((error) => {
-    console.error(error);
-    loginError.value = error
+    if (error.request.status === 401) {
+      loginError.value = "Incorrect credentials";
+    }
+    else {
+      console.error(error);
+      loginError.value = "An error occurred";
+    }
   });
 }
 </script>
@@ -33,7 +49,7 @@ const login = (event: SubmitEvent) => {
 <template>
   <div class="max-w-2xl mx-auto">
     <div class="center bg-white shadow-md border border-gray-200 rounded-lg max-w-sm p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700 w-1/2">
-      <form class="space-y-6" @submit="login">
+      <form class="space-y-6" @submit.prevent="login">
         <h3 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
         <div>
           <label for="email" class="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300">Your email</label>
@@ -49,13 +65,14 @@ const login = (event: SubmitEvent) => {
           account</RouterLink>
         </div>
       </form>
+      
       <div v-if="loginError" class="flex mt-8 items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
         <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
         </svg>
         <span class="sr-only">Info</span>
         <div>
-          <span class="font-medium">Login error!</span> Incorrect credentials
+          <span class="font-medium">Failed to login: </span>{{ loginError }}
         </div>
       </div>
     </div>

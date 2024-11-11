@@ -7,6 +7,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DirectoryRepository extends JpaRepository<DirectoryModel, Integer>{
+public interface DirectoryRepository extends JpaRepository<DirectoryModel, String>{
     List<DirectoryModel> findByOwnerId(int ownerId);
+
+    DirectoryModel findByIdAndOwnerId(String id, int ownerId);
+
+    // Find subdirectories of a directory (but not the directory itself)
+    List<DirectoryModel> findByParentIdAndOwnerIdAndIdNot(String parentId, int ownerId, String id);
 }

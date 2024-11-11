@@ -1,11 +1,18 @@
 package me.ikno.documentapi.services;
 
+import me.ikno.documentapi.exceptions.DuplicateDirectoryException;
 import me.ikno.documentapi.models.DirectoryModel;
 import me.ikno.documentapi.repositories.DirectoryRepository;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+import static me.ikno.documentapi.utils.IdUtils.compressUuid;
 
 @Service
 public class DirectoryService {
@@ -19,7 +26,7 @@ public class DirectoryService {
         return directoryRepository.findByOwnerId(userId);
     }
 
-    public @Nullable DirectoryModel getDirectoryById(int id, int userId) {
+    public @Nullable DirectoryModel getDirectoryById(String id, int userId) {
         DirectoryModel directory = directoryRepository.findById(id).orElse(null);
 
         if(directory == null) {
@@ -33,22 +40,43 @@ public class DirectoryService {
         return directory;
     }
 
-    public int createDirectory(String name, int parentId, int ownerId) {
+    public DirectoryModel createDirectory(String name, String parentId, int ownerId) {
         DirectoryModel parentDirectory = directoryRepository.findById(parentId).orElse(null);
 
         if(parentDirectory == null) {
-            return -1;
+            return null;
         }
 
         if(parentDirectory.getOwnerId() != ownerId) {
-            return -1;
+            return null;
         }
 
+        String directoryId = compressUuid(UUID.randomUUID().toString());
+
         DirectoryModel directoryModel = new DirectoryModel();
+        directoryModel.setId(directoryId);
         directoryModel.setDisplayName(name);
         directoryModel.setParentId(parentId);
         directoryModel.setOwnerId(ownerId);
 
-        return directoryRepository.save(directoryModel).getId();
+        try {
+            return directoryRepository.save(directoryModel);
+        } catch (Exception e) {
+            throw new DuplicateDirectoryException("Directory with name " + name + " already exists");
+        }
+    }
+
+    public String createRootDirectory(int ownerId) {
+        String directoryId = compressUuid(UUID.randomUUID().toString());
+
+        DirectoryModel directoryModel = new DirectoryModel();
+        directoryModel.setId(directoryId);
+        directoryModel.setDisplayName("root");
+        directoryModel.setParentId(directoryId);
+        directoryModel.setOwnerId(ownerId);
+
+        String id = directoryRepository.save(directoryModel).getId();
+
+        return id;
     }
 }

@@ -3,10 +3,12 @@ package me.ikno.documentapi.middleware;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.ikno.documentapi.exceptions.InvalidTokenException;
 import me.ikno.documentapi.services.JwtService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +22,9 @@ import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    @Value("${api.secret}")
+    private String apiSecret;
+
     private final JwtService jwtService;
 
     public JwtAuthenticationFilter(JwtService jwtService) {
@@ -36,27 +41,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             IOException
     {
         try {
-            String token = request.getHeader("Authorization");
+            String token = getTokenFromCookie(request);
 
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
+            if(token == null) {
+                throw new InvalidTokenException("No token provided");
+            }
 
-                if(!jwtService.isValidToken(token)) {
-                    throw new InvalidTokenException("Invalid token");
-                }
+            if(token.isBlank()) {
+                throw new InvalidTokenException("No token provided");
+            }
 
-                String email = jwtService.extractEmail(token);
-                Claims claims = jwtService.extractClaims(token);
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        email,
-                        claims,
-                        List.of()
+            if(token.equals(apiSecret)) {
+                UsernamePasswordAuthenticationToken apiAuthToken = new UsernamePasswordAuthenticationToken(
+                        null,
+                        null,
+                        List.of(() -> "SCOPE_api")
                 );
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                apiAuthToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(apiAuthToken);
+
+                filterChain.doFilter(request, response);
+                return;
             }
+
+            if(!jwtService.isValidToken(token)) {
+                throw new InvalidTokenException("Invalid token");
+            }
+
+            String email = jwtService.extractEmail(token);
+            Claims claims = jwtService.extractClaims(token);
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    email,
+                    claims,
+                    List.of()
+            );
+
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
 
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException ex) {
@@ -71,5 +94,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.getWriter().write(jsonResponse);
         }
+    }
+
+    private String getTokenFromCookie(HttpServletRequest request) {
+        for(Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("token")) {
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 }
