@@ -13,8 +13,8 @@ jobs:
     strategy:
       matrix:
         service:
-          - documentapi
-          - userapi
+          - DocumentAPI
+          - UserAPI
 
     steps:
       - name: Checkout code
@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image for ${{ matrix.service }}
-        run: docker build -t ${{ matrix.service }}:latest ./${{ matrix.service }}
+        run: docker build -t $(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]'):latest ./${{ matrix.service }}
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ matrix.service }}:latest
+        run: docker push $(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]'):latest
