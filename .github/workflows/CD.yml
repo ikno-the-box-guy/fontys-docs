@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image for ${{ matrix.service }}
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest ./${{ matrix.service }}
+        run: docker build -t ${{ matrix.service }}:latest ./${{ matrix.service }}
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest
+        run: docker push ${{ matrix.service }}:latest
