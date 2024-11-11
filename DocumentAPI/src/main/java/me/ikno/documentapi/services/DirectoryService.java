@@ -66,8 +66,7 @@ public class DirectoryService {
         }
     }
 
-    @Async
-    public CompletableFuture<String> createRootDirectory(int ownerId) {
+    public String createRootDirectory(int ownerId) {
         String directoryId = compressUuid(UUID.randomUUID().toString());
 
         DirectoryModel directoryModel = new DirectoryModel();
@@ -78,6 +77,6 @@ public class DirectoryService {
 
         String id = directoryRepository.save(directoryModel).getId();
 
-        return CompletableFuture.completedFuture(id);
+        return id;
     }
 }

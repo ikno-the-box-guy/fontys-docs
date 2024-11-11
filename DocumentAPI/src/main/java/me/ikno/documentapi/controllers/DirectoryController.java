@@ -89,9 +89,8 @@ public class DirectoryController {
     }
 
     // For API access only
-    @Async
     @PostMapping(value = "/directories/root/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<ResponseEntity<String>> createRootDirectory(@PathVariable Integer id) {
-        return directoryService.createRootDirectory(id).thenApply(ResponseEntity::ok);
+    public ResponseEntity<String> createRootDirectory(@PathVariable Integer id) {
+        return ResponseEntity.ok(directoryService.createRootDirectory(id));
     }
 }
