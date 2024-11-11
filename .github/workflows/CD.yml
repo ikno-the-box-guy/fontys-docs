@@ -13,8 +13,8 @@ jobs:
     strategy:
       matrix:
         service:
-          - DocumentAPI
-          - UserAPI
+          - documentapi
+          - userapi
 
     steps:
       - name: Checkout code
