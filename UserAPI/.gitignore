@@ -1,10 +1,6 @@
-application.properties
-
 HELP.md
+env.list
 target/
-mvnw
-mvnw.cmd
-.mvn
 !**/src/main/**/target/
 !**/src/test/**/target/
 
