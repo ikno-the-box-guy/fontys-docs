@@ -25,8 +25,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Run Tests for ${{ matrix.service }}
-        run: mvn test --file "${{ matrix.service }}/pom.xml"
+      #- name: Run Tests for ${{ matrix.service }}
+      #  run: mvn test --file "${{ matrix.service }}/pom.xml"
 
       - name: Build ${{ matrix.service }}
         run: mvn clean package --file "${{ matrix.service }}/pom.xml"
