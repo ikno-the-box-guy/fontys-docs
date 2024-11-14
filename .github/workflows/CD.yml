@@ -27,12 +27,15 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image for ${{ matrix.service }}
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]'):latest ./${{ matrix.service }}
+        run: |
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]'):latest"
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+          docker build -t $IMAGE_NAME ./${{ matrix.service }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/$(echo "${{ matrix.service }}" | tr "[:upper:]¨ "[:lower:]"):latest'
+          image-ref: "${{ env.IMAGE_NAME }}"
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
