@@ -36,6 +36,8 @@ jobs:
         uses: aquasecurity/trivy-action@0.28.0
         env:
           ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db
+          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db
         with:
           image-ref: ${{ env.IMAGE_TAG }}
           format: 'table'
