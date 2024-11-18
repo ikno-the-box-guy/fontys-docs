@@ -9,5 +9,3 @@ create table user
     constraint user_uq_email
         unique (email)
 );
-
-
