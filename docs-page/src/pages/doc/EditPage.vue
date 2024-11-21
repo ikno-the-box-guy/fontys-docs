@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {useRoute} from "vue-router";
 import {onBeforeMount, onBeforeUnmount, onMounted, ref, watch} from "vue";
+import { ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
 import MarkdownRenderer from "../../components/MarkdownRenderer.vue";
 import {WebsocketProvider} from "y-websocket";
 import * as Y from "yjs";
@@ -72,15 +73,34 @@ onBeforeUnmount(() => {
     yprovider.value.destroy();
   }
 });
+
+const saveDocument = () => {
+  const blob = new Blob([markdown.value], { type: "text/markdown" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = documentId.value + ".md";
+  link.click();
+  
+  link.remove()
+
+  URL.revokeObjectURL(url);
+}
 </script>
 
 <template>
-  <div class="p-6 bg-white min-h-full">
-    <h1 class="text-3xl font-bold mb-4">Edit</h1>
+  <div class="p-6 min-h-full xl:px-32">
+    <div class="flex flex-row justify-between items-baseline">
+      <h1 class="text-3xl font-bold mb-4">Edit</h1>
+      <button @click="saveDocument">
+        <ArrowDownTrayIcon class="h-6 w-6 text-gray-500"/>
+      </button>
+    </div>
     
     <div class="flex flex-col md:flex-row w-full space-y-4 md:space-x-4 md:space-y-0">
-      <textarea v-model="markdown" class="flex-col w-full md:w-1/2 rounded-lg border-2 p-4 h-96 bg-transparent" @input="onMarkdownChange"></textarea>
-      <div class="flex-col w-full md:w-1/2 rounded-lg border-2 p-4">
+      <textarea v-model="markdown" class="flex-col w-full md:w-1/2 rounded-lg border-2 border-gray-300 p-4 h-96 bg-transparent focus-visible:outline-gray-400" @input="onMarkdownChange"></textarea>
+      <div class="flex-col w-full md:w-1/2 rounded-lg border-2 border-gray-300 p-4">
         <article class="prose prose-img:rounded-lg prose-h1:mb-1 prose-a:text-blue-600 prose-img:shadow-lg">
           <MarkdownRenderer :source="markdown"/>
         </article>

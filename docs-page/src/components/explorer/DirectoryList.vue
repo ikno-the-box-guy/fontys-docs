@@ -54,7 +54,7 @@ watch(route, () => {
 </script>
 
 <template>
-  <ul class="space-y-2">
+  <ul class="space-y-3 h-full flex flex-col">
     <li v-for="dir in subdirectories" :key="dir.id">
       <RouterLink :to="'/explorer/' + dir.id" class="text-blue-600 hover:underline">
         <div class="bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition-colors">
@@ -63,8 +63,8 @@ watch(route, () => {
       </RouterLink>
     </li>
 
-    <li>
-      <button class="btn btn-green" @click="show = true">
+    <li :class="[{'pt-3': subdirectories?.length}, '!mt-auto']">
+      <button class="btn btn-fontys" @click="show = true">
         Create Directory
       </button>
       <span v-if="errorMessage" class="text-red-600 ml-4">{{errorMessage}}</span>
