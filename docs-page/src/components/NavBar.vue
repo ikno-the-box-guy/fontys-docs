@@ -11,7 +11,9 @@ const isActive = (path: string) => {
 };
 
 const roughMatch = (path: string) => {
-  return computed(() => route.path.startsWith(path));
+  return computed(() => {
+    console.log(route.path, path);
+    return route.path.startsWith(path)});
 };
 </script>
 
@@ -28,6 +30,9 @@ const roughMatch = (path: string) => {
       </li>
       <li v-if="user">
         <RouterLink :to="'/explorer/' + user.root" :class="[{ 'border-white': roughMatch('/explorer').value, 'border-transparent hover:text-gray-200': !roughMatch('/explorer').value }, 'inline-flex items-center px-1 pt-1 border-b-2 text-white text-lg']">Explorer</RouterLink>
+      </li>
+      <li>
+        <span :class="[{ 'hidden': !roughMatch('/edit').value}, 'border-white inline-flex items-center px-1 pt-1 border-b-2 text-white text-lg']" role="button">Edit</span>
       </li>
     </ul>
     <ul class="flex h-full items-center gap-4 text-lg">
