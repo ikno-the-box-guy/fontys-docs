@@ -39,23 +39,26 @@ const handleButtonClick = (action: string) => {
     <h3 class="text-lg font-semibold !mb-1">{{ title }}</h3>
     <p class="text-sm text-gray-700 !mt-0">{{ description }}</p>
 
-    <input
-        v-if="showInput"
-        v-model="inputValue"
-        :placeholder="inputPlaceholder"
-        class="input-field border p-2 w-full rounded mb-4"
-        type="text"
-    />
-
-    <div class="buttons flex justify-end space-x-2">
-      <button
-          v-for="(button, index) in buttons"
-          :key="index"
-          @click="handleButtonClick(button.action)"
-          class="btn btn-fontys"
-      >
-        {{ button.label }}
-      </button>
-    </div>
+    <form @submit.prevent>
+      <input
+          v-focus
+          v-if="showInput"
+          v-model="inputValue"
+          :placeholder="inputPlaceholder"
+          class="input-field border p-2 w-full rounded mb-4"
+          type="text"
+      />
+  
+      <div class="buttons flex justify-end space-x-2">
+        <button
+            v-for="(button, index) in buttons"
+            :key="index"
+            @click="handleButtonClick(button.action)"
+            class="btn btn-fontys"
+        >
+          {{ button.label }}
+        </button>
+      </div>
+    </form>
   </VueFinalModal>
 </template>

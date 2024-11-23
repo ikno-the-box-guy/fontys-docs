@@ -79,4 +79,18 @@ public class DirectoryService {
 
         return id;
     }
+
+    public List<DirectoryModel> getDirectoryHierarchy(String id, int userId) {
+        DirectoryModel directory = directoryRepository.findById(id).orElse(null);
+
+        if(directory == null) {
+            return null;
+        }
+
+        if(directory.getOwnerId() != userId) {
+            return null;
+        }
+
+        return directoryRepository.findDirectoryHierarchy(id);
+    }
 }

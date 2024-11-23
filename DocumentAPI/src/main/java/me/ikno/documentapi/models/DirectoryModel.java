@@ -23,6 +23,7 @@ public class DirectoryModel {
     @Column(name = "display_name", nullable = false)
     private String displayName;
 
+    // TODO: Flatten directory hierarchy
     @NotNull
     @Size(max = 32)
     @OnDelete(action = OnDeleteAction.CASCADE)

@@ -7,4 +7,12 @@ import {createVfm} from "vue-final-modal";
 
 const vfm = createVfm()
 
-createApp(App).use(vfm).use(router).mount('#app')
+const app = createApp(App)
+
+app.directive('focus', {
+    mounted(el) {
+        el.focus()
+    }
+})
+    
+app.use(vfm).use(router).mount('#app')

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import {Directory} from "../../entities/Directory.ts";
 import InputModal from "../modals/InputModal.vue";
 import {computed, ref, watch} from "vue";
 import {documentApi} from "../../api/AxiosInstances.ts";
 import {useRoute} from "vue-router";
-import {ArrowDownTrayIcon} from "@heroicons/vue/24/outline";
+import {ArrowDownTrayIcon, DocumentIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps<{
   parentId: string;
@@ -63,9 +62,12 @@ const downloadUrl = (id: string) => {
     <li v-for="doc in documents" :key="doc.id">
       <RouterLink :to="'/edit/' + doc.id" class="text-blue-600 hover:underline">
         <div class="bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition-colors flex flex-row justify-between group">
-          <span>{{ doc.displayName }}</span>
+          <div class="flex flex-row">
+            <DocumentIcon class="h-6 w-6 text-blue-600 mr-2"/>
+            <span>{{ doc.displayName }}</span>
+          </div>
           <a :href="downloadUrl(doc.id).value" @click.stop class="hidden group-hover:inline">
-            <ArrowDownTrayIcon class="h-6 w-6 text-gray-500"/>
+            <ArrowDownTrayIcon class="h-6 w-6 text-gray-500 hover:text-blue-700"/>
           </a>
         </div>
       </RouterLink>
