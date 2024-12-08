@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="p-6 min-h-full xl:px-32">
+  <div class="p-6 min-h-full xl:px-32" data-testid="home-page">
     <h1 class="text-3xl font-bold mb-4">Fontys Docs</h1>
     <p>
       <i><strong>The</strong></i> collaborative markdown editor.

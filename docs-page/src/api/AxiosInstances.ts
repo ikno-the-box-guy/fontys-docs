@@ -1,5 +1,5 @@
 import axios from "axios";
-import router from "../router.ts";
+import { router } from "../router.ts";
 
 export const documentApi = axios.create({
     baseURL: import.meta.env.VITE_DOC_API_URL,
