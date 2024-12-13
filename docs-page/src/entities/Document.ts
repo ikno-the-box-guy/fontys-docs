@@ -3,4 +3,6 @@ export type Document = {
     displayName: string;
     dateCreated: string;
     dateChanged: string;
+    parentId: string;
+    content: string;
 }

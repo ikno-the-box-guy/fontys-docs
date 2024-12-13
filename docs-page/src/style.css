@@ -1,5 +1,26 @@
 .btn {
-    @apply font-bold py-2 px-4 rounded-lg;
+    @apply font-medium py-2 px-4 rounded-lg;
+}
+
+@property --purple {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: #673366;
+}
+
+.btn-fontys {
+    @apply text-white;
+    background: radial-gradient(
+            circle at left bottom,
+            var(--purple) 0%,
+            #673366 80%
+    );
+    
+    transition: --purple 0.2s ease;
+}
+
+.btn-fontys:hover {
+    --purple: #e2017d;
 }
 
 .btn-blue {
@@ -17,8 +38,13 @@
 }
 
 .btn-green {
-    @apply bg-green-600 text-white;
+    @apply text-white;
+    background: #46ac4b;
 }
 .btn-green:hover {
-    @apply bg-green-700;
+    background: #329b38;
+}
+
+.bg-fontys {
+    background: #673366;
 }

@@ -2,7 +2,7 @@
 import axios from "axios";
 import {ref} from "vue";
 import user from "../../utils/localUser.ts";
-import router from "../../router.ts";
+import { router } from "../../router.ts";
 import {authApi} from "../../api/AxiosInstances.ts";
 
 const loginError = ref('');

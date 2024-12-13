@@ -29,6 +29,7 @@ public class DocumentApiApplication {
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .exposedHeaders("*")
+                        .exposedHeaders("Content-Disposition")
                         .allowedOrigins(corsOrigin)
                         .allowCredentials(true);
             }

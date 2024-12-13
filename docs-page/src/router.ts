@@ -7,7 +7,7 @@ import user from "./utils/localUser.ts";
 import PageNotFound from "./pages/PageNotFound.vue";
 import EditPage from "./pages/doc/EditPage.vue";
 
-const routes = [
+export const routes = [
     {
         name: 'home',
         path: '/',
@@ -49,7 +49,7 @@ const routes = [
     }
 ]
 
-const router = createRouter({
+export const router = createRouter({
     history: createWebHistory(),
     routes,
 })
@@ -73,5 +73,3 @@ router.beforeEach((to, from, next) => {
         next()
     }
 });
-
-export default router
