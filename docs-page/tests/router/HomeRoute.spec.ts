@@ -28,4 +28,18 @@ describe('HomeRoute.vue', () => {
         
         expect(router.currentRoute.value.name).toBe('home');
     });
+
+    it('back to login if token expired', async () => {
+        localUser.value = {
+            name: 'test',
+            email: 'test@test.com',
+            root: 1,
+            expiration: Date.now() - 1000,
+        };
+
+        await router.push('/');
+        await router.isReady();
+
+        expect(router.currentRoute.value.name).toBe('login');
+    });
 });

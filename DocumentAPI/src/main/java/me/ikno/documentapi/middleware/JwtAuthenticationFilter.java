@@ -44,11 +44,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = getTokenFromCookie(request);
 
             if(token == null) {
-                throw new InvalidTokenException("No token provided");
+                filterChain.doFilter(request, response);
+                return;
+//                throw new InvalidTokenException("No token provided");
             }
 
             if(token.isBlank()) {
-                throw new InvalidTokenException("No token provided");
+                filterChain.doFilter(request, response);
+                return;
+//                throw new InvalidTokenException("No token provided");
             }
 
             if(token.equals(apiSecret)) {
@@ -97,6 +101,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getTokenFromCookie(HttpServletRequest request) {
+        if(request == null || request.getCookies() == null) {
+            return null;
+        }
+
         for(Cookie cookie : request.getCookies()) {
             if(cookie.getName().equals("token")) {
                 return cookie.getValue();
