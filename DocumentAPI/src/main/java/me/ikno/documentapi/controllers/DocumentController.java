@@ -4,6 +4,9 @@ import me.ikno.documentapi.dtos.CreateDocumentDTO;
 import me.ikno.documentapi.models.DocumentModel;
 import me.ikno.documentapi.services.DocumentService;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +22,7 @@ public class DocumentController {
     }
 
     @GetMapping("/documents/{id}")
-    public ResponseEntity<DocumentModel> getDocumentById(String id) {
+    public ResponseEntity<DocumentModel> getDocumentById(@PathVariable String id) {
         DocumentModel document = documentService.getDocumentById(id);
 
         if (document == null) {
@@ -39,9 +42,24 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/documents/{id}/download")
-    public ResponseEntity<?> downloadDocument(String id) {
-        throw new NotImplementedException("Not implemented");
-    }
+    @GetMapping(value = "/documents/{id}/download", produces = MediaType.TEXT_MARKDOWN_VALUE)
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadDocument(@PathVariable String id) {
+        DocumentModel document = documentService.getDocumentById(id);
 
+        if (document == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String content = document.getContent();
+
+        byte[] bytes = content.getBytes();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_MARKDOWN);
+        headers.setContentDispositionFormData(document.getDisplayName(), document.getDisplayName() + ".md");
+        headers.setContentLength(bytes.length);
+
+        return ResponseEntity.ok().headers(headers).body(bytes);
+    }
 }

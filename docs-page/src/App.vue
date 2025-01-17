@@ -7,7 +7,7 @@ import 'vue-final-modal/style.css'
 <template>
   <div class="flex flex-col h-full">
     <NavBar />
-    <div class="grow">
+    <div class="grow bg-gray-100">
       <RouterView/>
     </div>
   </div>

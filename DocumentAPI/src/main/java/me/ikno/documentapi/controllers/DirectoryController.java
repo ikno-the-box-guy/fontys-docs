@@ -15,8 +15,6 @@ import java.util.concurrent.CompletableFuture;
 
 // Basic directory crud operations
 
-// TODO: Make all methods async
-
 @RestController
 @RequestMapping("api/v1")
 public class DirectoryController {
@@ -57,16 +55,6 @@ public class DirectoryController {
         return ResponseEntity.ok(directory);
     }
 
-    @PutMapping(value = "/directories/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DirectoryModel> updateDirectory(@PathVariable Integer id, @RequestBody UpdateDirectoryDTO updateDirectoryBody) {
-//        return directoryService.updateDirectory(directoryModel);
-//        return ResponseEntity.ok(directoryBody);
-
-        // TODO: Implement this
-
-        return null;
-    }
-
     @PostMapping(value = "/directories", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DirectoryModel> createDirectory(@RequestBody CreateDirectoryDTO createDirectoryBody) {
         // Pull info from request body
@@ -86,6 +74,23 @@ public class DirectoryController {
 
         // Return directory id
         return ResponseEntity.ok(directoryModel);
+    }
+
+    @GetMapping(value = "/directories/{id}/hierarchy", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DirectoryModel>> getDirectoryHierarchy(@PathVariable String id) {
+        // Get user id from auth token
+        int userId = authenticationUtil.getUserId();
+
+        // Get directory hierarchy
+        List<DirectoryModel> directoryHierarchy = directoryService.getDirectoryHierarchy(id, userId);
+
+        // Check if directory was found (also null if user is not owner)
+        if(directoryHierarchy == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Return directory hierarchy
+        return ResponseEntity.ok(directoryHierarchy);
     }
 
     // For API access only

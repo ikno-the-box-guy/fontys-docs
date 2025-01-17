@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {Directory} from "../../entities/Directory.ts";
 import InputModal from "../modals/InputModal.vue";
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {documentApi} from "../../api/AxiosInstances.ts";
 import {useRoute} from "vue-router";
+import {ArrowDownTrayIcon, DocumentIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps<{
   parentId: string;
@@ -50,20 +50,31 @@ const route = useRoute();
 watch(route, () => {
   errorMessage.value = '';
 });
+
+const downloadUrl = (id: string) => {
+  return computed(() => `${import.meta.env.VITE_DOC_API_URL}/documents/${id}/download`);
+};
+
 </script>
 
 <template>
-  <ul class="space-y-2">
+  <ul class="space-y-2 h-full flex flex-col">
     <li v-for="doc in documents" :key="doc.id">
       <RouterLink :to="'/edit/' + doc.id" class="text-blue-600 hover:underline">
-        <div class="bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition-colors">
-          {{ doc.displayName }}
+        <div class="bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition-colors flex flex-row justify-between group">
+          <div class="flex flex-row">
+            <DocumentIcon class="h-6 w-6 text-blue-600 mr-2"/>
+            <span>{{ doc.displayName }}</span>
+          </div>
+          <a :href="downloadUrl(doc.id).value" @click.stop class="hidden group-hover:inline">
+            <ArrowDownTrayIcon class="h-6 w-6 text-gray-500 hover:text-blue-700"/>
+          </a>
         </div>
       </RouterLink>
     </li>
 
-    <li>
-      <button class="btn btn-green" @click="show = true">
+    <li :class="[{'pt-3': documents?.length}, '!mt-auto']">
+      <button class="btn btn-fontys" @click="show = true">
         Create Document
       </button>
       <span v-if="errorMessage" class="text-red-600 ml-4">{{errorMessage}}</span>

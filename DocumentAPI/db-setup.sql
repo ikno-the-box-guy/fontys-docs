@@ -14,7 +14,7 @@ create table directory
 
 create table document
 (
-    document_id         int auto_increment
+    document_id         varchar(32)                        not null
         primary key,
     display_name        varchar(255)                       not null,
     content             mediumtext                         not null,
@@ -28,5 +28,3 @@ create table document
         foreign key (parent_directory_id) references directory (directory_id)
             on delete cascade
 );
-
-
